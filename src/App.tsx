@@ -1,11 +1,14 @@
-import { ThemeProvider } from "@/components/theme-provider"
-import Test from "./components/Test"
+import { ThemeProvider } from "./components/theme-provider"
+
+import Header from "./components/Header"
 
 function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Test/>
+      <div className="px-4 py-2">
+        <Header />
+      </div>
     </ThemeProvider>
   )
 }
