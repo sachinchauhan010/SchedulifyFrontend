@@ -63,7 +63,7 @@ export function ThemeProvider({
   )
 }
 
-export const useTheme = () => {
+export const useTheme = () => {          //eslint-disable-line
   const context = useContext(ThemeProviderContext)
 
   if (context === undefined)
