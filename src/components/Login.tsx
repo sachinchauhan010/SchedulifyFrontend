@@ -50,7 +50,7 @@ export default function AuthDialog() {
   const handleSubmit = async () => {
     if (isRegistering) {
       try {
-        await fetch( 'http://localhost:8000/api/faculty/signup', {
+        await fetch(`${process.env.PRODUCTION_URI}/api/faculty/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -60,7 +60,6 @@ export default function AuthDialog() {
       } catch (error) {
         console.log("Error in sending reguest to backend for sign up", error);
       }
-
     } else {
       console.log('Logging in with data:', formData)
     }
