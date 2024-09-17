@@ -50,7 +50,7 @@ export default function AuthDialog() {
   const handleSubmit = async () => {
     if (isRegistering) {
       try {
-        await fetch(`${process.env.PRODUCTION_URI}/api/faculty/signup`, {
+        await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
