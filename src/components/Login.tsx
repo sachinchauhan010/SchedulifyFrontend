@@ -45,11 +45,22 @@ export default function AuthDialog() {
     const { id, value } = e.target
     setFormData(prevData => ({ ...prevData, [id]: value }))
   }
-  
 
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     if (isRegistering) {
-      console.log('Registering with data:', formData)
+      try {
+        await fetch( 'http://localhost:8000/api/faculty/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+      } catch (error) {
+        console.log("Error in sending reguest to backend for sign up", error);
+      }
+
     } else {
       console.log('Logging in with data:', formData)
     }
@@ -67,7 +78,7 @@ export default function AuthDialog() {
           <DialogDescription>Enter your email to sign up for this web application</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-        {isRegistering &&
+          {isRegistering &&
             <div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">
@@ -116,7 +127,7 @@ export default function AuthDialog() {
               onChange={handleInputChange}
             />
           </div>
-          
+
         </div>
         <DialogFooter className="flex justify-between item-center gap-x-48">
           <DialogClose asChild>
@@ -128,7 +139,7 @@ export default function AuthDialog() {
         </DialogFooter>
         <div onClick={() => setIsRegistering(!isRegistering)} className='text-right hover:cursor-pointer'>
           {isRegistering ? 'Already account Login' : 'Register Now!..'}
-        </div> 
+        </div>
       </DialogContent>
     </Dialog>
   )
