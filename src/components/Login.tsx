@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react"
+import { useToast } from "@/hooks/use-toast"
+
 
 import { Button } from "./ui/button"
 import {
@@ -15,6 +17,8 @@ import { Label } from "./ui/label"
 import { DialogDescription } from "@radix-ui/react-dialog"
 
 export default function AuthDialog() {
+  const { toast } = useToast()
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -50,18 +54,71 @@ export default function AuthDialog() {
   const handleSubmit = async () => {
     if (isRegistering) {
       try {
-        await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/signup`, {
+        // await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/signup`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URI}/api/faculty/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(formData),
         });
+
+        const apiresponse = await response.json();
+        if (apiresponse.success) {
+          toast({
+            title: "Sign up: successfully",
+            description: `Hello 🫱🏼‍🫲🏼 ${formData.name}`,
+          })
+          setFormData({
+            email: '',
+            password: '',
+            name: '',
+            id: '',
+          })
+
+        } else {
+          toast({
+            title: "Sign up: Failed",
+            description: "try again",
+          })
+        }
       } catch (error) {
         console.log("Error in sending reguest to backend for sign up", error);
       }
+
+
+      // Login request
     } else {
-      console.log('Logging in with data:', formData)
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URI}/api/faculty/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
+        const apiresponse = await response.json()
+        if (!apiresponse.success) {
+          toast({
+            title: "Login: Failed",
+            description: "try again...",
+          })
+          return;
+        }
+        toast({
+          title: "Login: Successfully",
+          description: `You have sign up via ${formData.email}`,
+        })
+
+        setFormData({
+          email: '',
+          password: '',
+          name: '',
+          id: '',
+        })
+      } catch (error) {
+        console.log("Error in sending reguest to backend for login", error);
+      }
     }
     handleDialogClose()
   }
