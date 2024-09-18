@@ -95,6 +95,7 @@ export default function AuthDialog() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(formData),
+          credentials: 'include'
         })
         const apiresponse = await response.json()
         if (!apiresponse.success) {
