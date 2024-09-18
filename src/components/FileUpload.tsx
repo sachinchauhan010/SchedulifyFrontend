@@ -1,12 +1,57 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import * as XLSX from "xlsx";
-
-interface DataRow {
-  [key: string]: string | number;
-}
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "./ui/button";
+import { toast } from "@/hooks/use-toast";
 
 function FileUpload() {
-  const [data, setData] = useState<DataRow[]>([]);
+  const [data, setData] = useState<any>([])
+  const [ttData, setTTData] = useState<any>({})
+
+  useEffect(() => {
+    if (data.length > 0) {
+      const groupedByDays = data.reduce((result: { [key: number | string]: any }, current: any) => {
+        const { Day, ...rest }: any = current;
+
+        if (!result[Day]) {
+          result[Day] = [];
+        }
+        result[Day].push(rest);
+
+        return result;
+      }, {});
+      setTTData(groupedByDays);
+    }
+  }, [data]);
+
+  const handleFileSubmit = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/settimetable`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(ttData),
+      });
+      const apiresponse = await response.json();
+      if (!apiresponse.success) {
+        toast({
+          title: "Failed to upload Time Table",
+        });
+        return;
+      }
+
+      toast({
+        title: "Time Table uploaded successfully",
+      });
+    } catch (error) {
+      console.error("Error uploading timetable:", error);
+      toast({
+        title: "Failed to upload Time Table",
+      });
+    }
+  };
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -18,47 +63,22 @@ function FileUpload() {
         const workbook = XLSX.read(binaryStr, { type: "binary" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        const parsedData: DataRow[] = XLSX.utils.sheet_to_json(sheet);
+        const parsedData = XLSX.utils.sheet_to_json(sheet);
         setData(parsedData);
       };
-      console.log(data, "Faculty Data");
     }
   };
 
   return (
     <div>
-      <div className="w-fit flex flex-col justify-center items-center text-center border-[2px] rounded">
-        <div className="text-lg font-semibold py-2">Upload/Update Your Time Table</div>
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          onChange={handleFileUpload}
-          className="text-center px-4"
-        />
-       
-        {data.length > 0 && (
-          <table className="table">
-            <thead>
-              <tr>
-                {Object.keys(data[0]).map((key) => (
-                  <th key={key}>{key}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, index) => (
-                <tr key={index}>
-                  {Object.values(row).map((value, index) => (
-                    <td key={index}>{value}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        <br /><br />
+      <div className="grid w-full max-w-sm items-center gap-1.5">
+        <Label htmlFor="picture">Upload Time Table</Label>
+        <Input id="picture" type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
       </div>
+
+      <Button onClick={handleFileSubmit}>Upload</Button>
+
+      <br /><br />
     </div>
   );
 }
