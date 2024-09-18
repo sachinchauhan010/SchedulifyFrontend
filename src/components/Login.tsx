@@ -90,7 +90,7 @@ export default function AuthDialog() {
       // Login request
     } else {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URI}/api/faculty/login`, {
+        const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
