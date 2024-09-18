@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react"
+import { useToast } from "@/hooks/use-toast"
+
 
 import { Button } from "./ui/button"
 import {
@@ -15,6 +17,8 @@ import { Label } from "./ui/label"
 import { DialogDescription } from "@radix-ui/react-dialog"
 
 export default function AuthDialog() {
+  const { toast } = useToast()
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -45,13 +49,76 @@ export default function AuthDialog() {
     const { id, value } = e.target
     setFormData(prevData => ({ ...prevData, [id]: value }))
   }
-  
 
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     if (isRegistering) {
-      console.log('Registering with data:', formData)
+      try {
+        // await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/signup`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URI}/api/faculty/signup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const apiresponse = await response.json();
+        if (apiresponse.success) {
+          toast({
+            title: "Sign up: successfully",
+            description: `Hello 🫱🏼‍🫲🏼 ${formData.name}`,
+          })
+          setFormData({
+            email: '',
+            password: '',
+            name: '',
+            id: '',
+          })
+
+        } else {
+          toast({
+            title: "Sign up: Failed",
+            description: "try again",
+          })
+        }
+      } catch (error) {
+        console.log("Error in sending reguest to backend for sign up", error);
+      }
+
+
+      // Login request
     } else {
-      console.log('Logging in with data:', formData)
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URI}/api/faculty/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
+        const apiresponse = await response.json()
+        if (!apiresponse.success) {
+          toast({
+            title: "Login: Failed",
+            description: "try again...",
+          })
+          return;
+        }
+        toast({
+          title: "Login: Successfully",
+          description: `You have sign up via ${formData.email}`,
+        })
+
+        setFormData({
+          email: '',
+          password: '',
+          name: '',
+          id: '',
+        })
+      } catch (error) {
+        console.log("Error in sending reguest to backend for login", error);
+      }
     }
     handleDialogClose()
   }
@@ -67,7 +134,7 @@ export default function AuthDialog() {
           <DialogDescription>Enter your email to sign up for this web application</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-        {isRegistering &&
+          {isRegistering &&
             <div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">
@@ -116,7 +183,7 @@ export default function AuthDialog() {
               onChange={handleInputChange}
             />
           </div>
-          
+
         </div>
         <DialogFooter className="flex justify-between item-center gap-x-48">
           <DialogClose asChild>
@@ -128,7 +195,7 @@ export default function AuthDialog() {
         </DialogFooter>
         <div onClick={() => setIsRegistering(!isRegistering)} className='text-right hover:cursor-pointer'>
           {isRegistering ? 'Already account Login' : 'Register Now!..'}
-        </div> 
+        </div>
       </DialogContent>
     </Dialog>
   )

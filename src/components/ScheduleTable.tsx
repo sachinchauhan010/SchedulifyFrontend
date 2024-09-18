@@ -79,7 +79,7 @@ function ScheduleTable() {
   };
 
   return (
-    <div className="w-full px-10">
+    <div className="w-full">
       <div className="text-2xl text-center w-full">Today&apos;s Schedule</div>
       <div className="text-xl font-medium p-2">Day: Monday</div>
       <Table>
