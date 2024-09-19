@@ -54,7 +54,7 @@ export default function AuthDialog() {
   const handleSubmit = async () => {
     if (isRegistering) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/signup`, {
+        const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/auth/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ export default function AuthDialog() {
       // Login request
     } else {
       try {
-        const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/login`, {
+        const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
