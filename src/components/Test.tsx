@@ -1,11 +1,7 @@
-import { ThemeToggle } from "./theme-toggle"
-function Test() {
+
+export function Test() {
   return (
-    <div>
-      Hello
-      <ThemeToggle/> 
-    </div>
+   <>
+   </>
   )
 }
-
-export default Test
