@@ -10,46 +10,45 @@ import { useEffect, useState } from "react"
 
 
 function Avtar() {
-  const [name, setName] =useState(null)
+  const [name, setName] = useState(null)
 
   async function fetchName() {
-    const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faulty/getusername`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
-    });
+    let response;
+    try {
+      response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/getusername`, {
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.log(error, 'error fetching user name');
+    }
 
-    const apiresponse=await response.json();
+    const apiresponse = await response?.json();
 
-    if(apiresponse.success){
+    if (apiresponse.success) {
       setName(apiresponse.userData)
     }
-    console.log("Called")
   }
 
-  useEffect(()=>{
-   fetchName();
-   console.log(name)
+  useEffect(() => {
+    fetchName();
   }, [])
 
   return (
     <>
-    <DropdownMenu>
+      <DropdownMenu>
 
-      <DropdownMenuTrigger>
-        Name: {name}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        <DropdownMenuTrigger>
+          Name: {name}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>Billing</DropdownMenuItem>
+          <DropdownMenuItem>Team</DropdownMenuItem>
+          <DropdownMenuItem>Subscription</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   )
 }
