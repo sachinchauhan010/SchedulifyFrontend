@@ -28,7 +28,7 @@ import { Button } from "./ui/button";
 function Avtar() {
 
   const [data, setData] = useState<any>([])
-  const [ttData, setTTData] = useState<any>({})
+  const [ttData, setTTData] = useState<any>([])
   const [name, setName] = useState(null)
 
   useEffect(() => {
@@ -42,8 +42,14 @@ function Avtar() {
         result[Day].push(rest);
 
         return result;
-      }, {});
-      setTTData(groupedByDays);
+      }, []);
+
+      const ttDataArray = Object.keys(groupedByDays).map((day) => ({
+        Day: day,
+        data: groupedByDays[day],
+      }));
+      
+      setTTData(ttDataArray);
     }
   }, [data]);
 
@@ -55,6 +61,7 @@ function Avtar() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(ttData),
+        credentials:'include'
       });
       const apiresponse = await response.json();
       
