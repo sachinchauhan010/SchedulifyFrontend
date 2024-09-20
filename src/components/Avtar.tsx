@@ -30,6 +30,21 @@ function Avtar() {
   const [data, setData] = useState<any>([])
   const [ttData, setTTData] = useState<any>([])
   const [name, setName] = useState(null)
+  const [auth, setAuth] = useState(true)
+
+  async function handleLogout() {
+    const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+    const data: any = response.json();
+    if (data?.success) {
+      setAuth(false);
+      console.log('Logout successful');
+    } else {
+      console.error('Logout failed:', data?.message);
+    }
+  }
 
   useEffect(() => {
     if (data.length > 0) {
@@ -48,7 +63,7 @@ function Avtar() {
         Day: day,
         data: groupedByDays[day],
       }));
-      
+
       setTTData(ttDataArray);
     }
   }, [data]);
@@ -61,10 +76,10 @@ function Avtar() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(ttData),
-        credentials:'include'
+        credentials: 'include'
       });
       const apiresponse = await response.json();
-      
+
       if (!apiresponse.success) {
         toast({
           title: "Failed to upload Time Table",
@@ -119,7 +134,7 @@ function Avtar() {
 
   useEffect(() => {
     fetchName();
-  }, [])
+  }, [auth])
 
   return (
     <>
@@ -138,6 +153,7 @@ function Avtar() {
             </DropdownMenuItem>
             <DropdownMenuItem>Team</DropdownMenuItem>
             <DropdownMenuItem>Subscription</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <DialogContent>
