@@ -1,4 +1,3 @@
-import FileUpload from "@/components/FileUpload"
 import ScheduleTable from "@/components/ScheduleTable"
 
 function Home() {
@@ -9,7 +8,6 @@ function Home() {
   return (
     <div>
       <button className="border border-red-900 p-3 m-3" onClick={handleCheck}>check Auth</button>
-      <FileUpload />
       <ScheduleTable />
     </div>
   )
