@@ -21,6 +21,12 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 type ScheduleItem = {
   Period: string;
@@ -74,62 +80,68 @@ function ScheduleTable() {
   return (
     <div className="w-full">
       <div className="text-2xl text-center w-full">Today's Schedule</div>
-      {Object.keys(schedule).map((day) => (
+      {Object.keys(schedule).map((day, index) => (
         <div key={day}>
-          <div className="text-xl font-medium p-2">Day: {day}</div>
-          <Table>
-            <TableCaption>Your schedule for {day}</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Period</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead>Course</TableHead>
-                <TableHead>Semester</TableHead>
-                <TableHead>Batch</TableHead>
-                <TableHead>Class Type</TableHead>
-                <TableHead>Hall Name</TableHead>
-                <TableHead>Want to Attend</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Array.isArray(schedule[day]) && schedule[day].length > 0 ? (
-                schedule[day].map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{item.Period}</TableCell>
-                    <TableCell>{item.Time}</TableCell>
-                    <TableCell>{item.Subject}</TableCell>
-                    <TableCell>{item.Course}</TableCell>
-                    <TableCell>{item.Semester}</TableCell>
-                    <TableCell>{item.Batch}</TableCell>
-                    <TableCell>{item.ClassType}</TableCell>
-                    <TableCell>{item.HallName}</TableCell>
-                    <TableCell>
-                      <RadioGroup
-                        defaultValue="yes"
-                        onValueChange={handleRadioChange}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="yes" id={`yes-${index}`} />
-                          <Label htmlFor={`yes-${index}`}>Yes</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="no" id={`no-${index}`} />
-                          <Label htmlFor={`no-${index}`}>No</Label>
-                        </div>
-                      </RadioGroup>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={9} className="text-center">
-                    No schedule available for {day}.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <Accordion type="single" collapsible defaultValue="item-0">
+            <AccordionItem value={"item-"+index}>
+              <AccordionTrigger>{day}</AccordionTrigger>
+              <AccordionContent>
+                <Table>
+                  <TableCaption>Your schedule for {day}</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Period</TableHead>
+                      <TableHead>Time</TableHead>
+                      <TableHead>Subject</TableHead>
+                      <TableHead>Course</TableHead>
+                      <TableHead>Semester</TableHead>
+                      <TableHead>Batch</TableHead>
+                      <TableHead>Class Type</TableHead>
+                      <TableHead>Hall Name</TableHead>
+                      <TableHead>Want to Attend</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {Array.isArray(schedule[day]) && schedule[day].length > 0 ? (
+                      schedule[day].map((item, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{item.Period}</TableCell>
+                          <TableCell>{item.Time}</TableCell>
+                          <TableCell>{item.Subject}</TableCell>
+                          <TableCell>{item.Course}</TableCell>
+                          <TableCell>{item.Semester}</TableCell>
+                          <TableCell>{item.Batch}</TableCell>
+                          <TableCell>{item.ClassType}</TableCell>
+                          <TableCell>{item.HallName}</TableCell>
+                          <TableCell>
+                            <RadioGroup
+                              defaultValue="yes"
+                              onValueChange={handleRadioChange}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="yes" id={`yes-${index}`} />
+                                <Label htmlFor={`yes-${index}`}>Yes</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="no" id={`no-${index}`} />
+                                <Label htmlFor={`no-${index}`}>No</Label>
+                              </div>
+                            </RadioGroup>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={9} className="text-center">
+                          No schedule available for {day}.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       ))}
 
