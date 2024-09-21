@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { getDay } from "@/utils/getDay";
+
 import {
   Table,
   TableBody,
@@ -77,12 +79,14 @@ function ScheduleTable() {
     getSchedule();
   }, []);
 
+  const currentDay = getDay();
+
   return (
     <div className="w-full">
       <div className="text-2xl text-center w-full">Today's Schedule</div>
       {Object.keys(schedule).map((day, index) => (
         <div key={day}>
-          <Accordion type="single" collapsible defaultValue="item-0">
+          <Accordion type="single" collapsible defaultValue={"item-" + (currentDay.name == day ? currentDay.id : "")}>
             <AccordionItem value={"item-"+index}>
               <AccordionTrigger>{day}</AccordionTrigger>
               <AccordionContent>
