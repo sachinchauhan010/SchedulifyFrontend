@@ -26,9 +26,24 @@ import { Button } from "./ui/button";
 
 function Avtar() {
 
-  const [data, setData] = useState<any>([])
-  const [ttData, setTTData] = useState<any>([])
+  const [data, setData] = useState([])
+  const [ttData, setTTData] = useState<{ Day: string; data: any; }[]>([])
   const [name, setName] = useState(null)
+
+  const [auth, setAuth] = useState(true)
+  async function handleLogout() {
+    const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+    const data: any = response.json();
+    if (data?.success) {
+      setAuth(false);
+      console.log('Logout successful');
+    } else {
+      console.error('Logout failed:', data?.message);
+    }
+  }
 
   useEffect(() => {
     if (data.length > 0) {
@@ -68,7 +83,7 @@ function Avtar() {
         const workbook = XLSX.read(binaryStr, { type: "binary" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        const parsedData = XLSX.utils.sheet_to_json(sheet);
+        const parsedData: any = XLSX.utils.sheet_to_json(sheet);
         setData(parsedData); // Set the parsed Excel data
       };
     }
@@ -126,7 +141,7 @@ function Avtar() {
 
   useEffect(() => {
     fetchName();
-  }, [])
+  }, [auth])
 
   return (
     <>
