@@ -25,9 +25,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "./ui/button";
 
 function Avtar() {
-  const [data, setData] = useState<any>([]);
-  const [ttData, setTTData] = useState<any>({});
-  const [name, setName] = useState<string | null>(null);
+
+  const [data, setData] = useState<any>([])
+  const [ttData, setTTData] = useState<any>([])
+  const [name, setName] = useState(null)
 
   useEffect(() => {
     if (data.length > 0) {
@@ -47,9 +48,12 @@ function Avtar() {
         {}
       ); 
 
-      console.log("Grouped by Days:", groupedByDays);
-
-      setTTData(groupedByDays);
+      const ttDataArray = Object.keys(groupedByDays).map((day) => ({
+        Day: day,
+        data: groupedByDays[day],
+      }));
+      
+      setTTData(ttDataArray);
     }
   }, [data]);
 
@@ -72,30 +76,18 @@ function Avtar() {
 
   // Handle File Submission to the API
   const handleFileSubmit = async () => {
-    // Check if ttData is ready
-    if (!ttData || Object.keys(ttData).length === 0) {
-      toast({
-        title: "Time Table is empty. Please upload the data before submitting.",
-      });
-      return;
-    }
-
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/settimetable`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(ttData), // Send ttData to the backend
-          credentials: "include",
-        }
-      );
-
-      const apiResponse = await response.json();
-
-      if (!apiResponse.success) {
+      const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/settimetable`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(ttData),
+        credentials:'include'
+      });
+      const apiresponse = await response.json();
+      
+      if (!apiresponse.success) {
         toast({
           title: "Failed to upload Time Table",
         });
@@ -134,7 +126,7 @@ function Avtar() {
 
   useEffect(() => {
     fetchName();
-  }, []);
+  }, [])
 
   return (
     <>
@@ -152,6 +144,7 @@ function Avtar() {
             </DropdownMenuItem>
             <DropdownMenuItem>Team</DropdownMenuItem>
             <DropdownMenuItem>Subscription</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <DialogContent>
