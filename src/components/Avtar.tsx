@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 import {
   DropdownMenu,
@@ -18,54 +18,84 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "./ui/button";
 
-
 function Avtar() {
-
-  const [data, setData] = useState<any>([])
-  const [ttData, setTTData] = useState<any>([])
-  const [name, setName] = useState(null)
+  const [data, setData] = useState<any>([]);
+  const [ttData, setTTData] = useState<any>({});
+  const [name, setName] = useState<string | null>(null);
 
   useEffect(() => {
     if (data.length > 0) {
-      const groupedByDays = data.reduce((result: { [key: number | string]: any }, current: any) => {
-        const { Day, ...rest }: any = current;
+      console.log("Data before grouping:", data);
 
-        if (!result[Day]) {
-          result[Day] = [];
-        }
-        result[Day].push(rest);
+      const groupedByDays = data.reduce(
+        (result: { [key: number | string]: any }, current: any) => {
+          const { Day, ...rest }: any = current;
 
-        return result;
-      }, []);
+          if (!result[Day]) {
+            result[Day] = [];
+          }
+          result[Day].push(rest);
 
-      const ttDataArray = Object.keys(groupedByDays).map((day) => ({
-        Day: day,
-        data: groupedByDays[day],
-      }));
-      
-      setTTData(ttDataArray);
+          return result;
+        },
+        {}
+      ); 
+
+      console.log("Grouped by Days:", groupedByDays);
+
+      setTTData(groupedByDays);
     }
   }, [data]);
 
+  // Handle File Upload and read data
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsBinaryString(file);
+      reader.onload = (event) => {
+        const binaryStr = event.target?.result as string;
+        const workbook = XLSX.read(binaryStr, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const parsedData = XLSX.utils.sheet_to_json(sheet);
+        setData(parsedData); // Set the parsed Excel data
+      };
+    }
+  };
+
+  // Handle File Submission to the API
   const handleFileSubmit = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/settimetable`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(ttData),
-        credentials:'include'
+    // Check if ttData is ready
+    if (!ttData || Object.keys(ttData).length === 0) {
+      toast({
+        title: "Time Table is empty. Please upload the data before submitting.",
       });
-      const apiresponse = await response.json();
-      
-      if (!apiresponse.success) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/settimetable`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(ttData), // Send ttData to the backend
+          credentials: "include",
+        }
+      );
+
+      const apiResponse = await response.json();
+
+      if (!apiResponse.success) {
         toast({
           title: "Failed to upload Time Table",
         });
@@ -83,43 +113,28 @@ function Avtar() {
     }
   };
 
-  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsBinaryString(file);
-      reader.onload = (event) => {
-        const binaryStr = event.target?.result as string;
-        const workbook = XLSX.read(binaryStr, { type: "binary" });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const parsedData = XLSX.utils.sheet_to_json(sheet);
-        setData(parsedData);
-      };
-    }
-  };
-
-
+  // Fetch Username when component mounts
   async function fetchName() {
-    let response;
     try {
-      response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/getusername`, {
-        credentials: 'include'
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/getusername`,
+        {
+          credentials: "include",
+        }
+      );
+      const apiResponse = await response.json();
+
+      if (apiResponse.success) {
+        setName(apiResponse.userData);
+      }
     } catch (error) {
-      console.log(error, 'error fetching user name');
-    }
-
-    const apiresponse = await response?.json();
-
-    if (apiresponse.success) {
-      setName(apiresponse.userData)
+      console.log("Error fetching user name:", error);
     }
   }
 
   useEffect(() => {
     fetchName();
-  }, [])
+  }, []);
 
   return (
     <>
@@ -133,7 +148,6 @@ function Avtar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>
-
               <DialogTrigger>Upload TimeTable</DialogTrigger>
             </DropdownMenuItem>
             <DropdownMenuItem>Team</DropdownMenuItem>
@@ -146,17 +160,20 @@ function Avtar() {
             <DialogDescription>
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="picture">Upload Time Table</Label>
-                <Input id="picture" type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+                <Input
+                  id="picture"
+                  type="file"
+                  accept=".xlsx, .xls"
+                  onChange={handleFileUpload}
+                />
               </div>
-
               <Button onClick={handleFileSubmit}>Upload</Button>
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
-
       </Dialog>
     </>
-  )
+  );
 }
 
-export default Avtar
+export default Avtar;
