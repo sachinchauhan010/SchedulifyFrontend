@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDay } from "@/utils/getDay";
+import { getDay, getDayIdByName } from "@/utils/getDay";
 
 import {
   Table,
@@ -79,15 +79,13 @@ function ScheduleTable() {
     getSchedule();
   }, []);
 
-  const currentDay = getDay();
-
   return (
     <div className="w-full">
       <div className="text-2xl text-center w-full">Today's Schedule</div>
-      {Object.keys(schedule).map((day, index) => (
+      {Object.keys(schedule).map((day) => (
         <div key={day}>
-          <Accordion type="single" collapsible defaultValue={"item-" + (currentDay.name == day ? currentDay.id : "")}>
-            <AccordionItem value={"item-"+index}>
+          <Accordion type="single" collapsible defaultValue={"item-" + getDay().id}>
+            <AccordionItem value={"item-" + getDayIdByName(day)}>
               <AccordionTrigger>{day}</AccordionTrigger>
               <AccordionContent>
                 <Table>
