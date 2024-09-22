@@ -29,6 +29,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { useAuth } from "@/contexts/AuthContext";
 
 type ScheduleItem = {
   Period: string;
@@ -50,6 +51,8 @@ function ScheduleTable() {
   const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [schedule, setSchedule] = useState<Schedule>({});
 
+  const { authState } = useAuth();
+
   const handleRadioChange = (value: string) => {
     if (value === "no") {
       setOpenAlert(true);
@@ -67,6 +70,7 @@ function ScheduleTable() {
       const apiresponse = await response.json();
       if (!apiresponse.success) {
         console.log("Failed to fetch the data");
+        setSchedule({})
         return;
       }
       setSchedule(apiresponse?.data[0] || {});
@@ -77,7 +81,7 @@ function ScheduleTable() {
 
   useEffect(() => {
     getSchedule();
-  }, []);
+  }, [authState?.isLoggedIn]);
 
   return (
     <div className="w-full">

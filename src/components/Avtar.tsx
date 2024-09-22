@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useEffect} from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import * as XLSX from "xlsx";
 
 import { toast } from "@/hooks/use-toast";
@@ -32,18 +32,16 @@ function Avtar() {
   const [ttData, setTTData] = useState<{ Day: string; data: any; }[]>([])
   const [name, setName] = useState(null)
 
-  const {authState, dispatch: dispatchAuthState} = useAuth() 
+  const { authState, dispatch: dispatchAuthState } = useAuth()
 
   async function handleLogout() {
     const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/auth/logout`, {
       method: 'POST',
       credentials: 'include'
     });
-    const data: any = response.json();
+    const data: any = await response.json();
     if (data?.success) {
-      dispatchAuthState({
-        type:"LOGOUT",
-      })
+      dispatchAuthState({ type: "LOGOUT", })
       console.log('Logout successful');
     } else {
       console.error('Logout failed:', data?.message);
@@ -66,13 +64,13 @@ function Avtar() {
           return result;
         },
         {}
-      ); 
+      );
 
       const ttDataArray = Object.keys(groupedByDays).map((day) => ({
         Day: day,
         data: groupedByDays[day],
       }));
-      
+
       setTTData(ttDataArray);
     }
   }, [data]);
@@ -103,10 +101,10 @@ function Avtar() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(ttData),
-        credentials:'include'
+        credentials: 'include'
       });
       const apiresponse = await response.json();
-      
+
       if (!apiresponse.success) {
         toast({
           title: "Failed to upload Time Table",
