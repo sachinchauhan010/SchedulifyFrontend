@@ -1,6 +1,5 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "./components/theme-provider"
 import { AuthProvider } from "./contexts/AuthContext"
 
@@ -9,9 +8,26 @@ import './index.css'
 import ErrorPage from './components/ErrorPage.tsx'
 import About from './pages/About.tsx'
 import ScheduleTable from './components/ScheduleTable.tsx';
+import Header from './components/Header.tsx';
+import Footer from './components/Footer.tsx';
+
+const AppLayout = () => {
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <AuthProvider>
+        <Header />
+        <Outlet />
+        <Footer />
+      </AuthProvider>
+    </ThemeProvider>
+  )
+}
+
 
 const appRouter = createBrowserRouter([
   {
+    path: "/",
+    element: <AppLayout />,
     children: [
       {
         path: "/",
@@ -31,14 +47,5 @@ const appRouter = createBrowserRouter([
 ]);
 
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <AuthProvider>
-        <div className='px-6 py-2'>
-        <RouterProvider router={appRouter} />
-        </div>
-      </AuthProvider>
-    </ThemeProvider>
-  </StrictMode>,
-)
+const root = createRoot(document.getElementById("root")!)
+root.render(<RouterProvider router={appRouter} />)
