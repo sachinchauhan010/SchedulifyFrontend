@@ -9,7 +9,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <AuthProvider>
-        <div className="px-4 py-2">
+        <div className="px-8 py-2">
           <Header />
           <Toaster />
           <Home />

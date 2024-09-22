@@ -81,7 +81,7 @@ function ScheduleTable() {
 
   return (
     <div className="w-full">
-      <div className="text-2xl text-center w-full">Today's Schedule</div>
+      <div className="text-2xl text-center w-full">Track My Class</div>
       {Object.keys(schedule).map((day) => (
         <div key={day}>
           <Accordion type="single" collapsible defaultValue={"item-" + getDay().id}>
@@ -165,6 +165,7 @@ function ScheduleTable() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {/* <div className="text-base text-center w-full">Track your progress in every class, empowering both students and teachers to stay organized and excel together!</div> */}
     </div>
   );
 }
