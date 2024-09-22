@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect} from "react"
 import { useToast } from "@/hooks/use-toast"
-
+import { useAuth } from "@/contexts/AuthContext"
 
 import { Button } from "./ui/button"
 import {
@@ -17,7 +17,10 @@ import { Label } from "./ui/label"
 import { DialogDescription } from "@radix-ui/react-dialog"
 
 export default function AuthDialog() {
+
   const { toast } = useToast()
+  const {authState, dispatch: dispatchAuthState} = useAuth() 
+
 
   const [formData, setFormData] = useState({
     email: '',
@@ -105,6 +108,12 @@ export default function AuthDialog() {
           })
           return;
         }
+        dispatchAuthState({
+          type:"LOGIN",
+          payload: {
+            name:formData?.name || ""
+          }
+        })
         toast({
           title: "Login: Successfully",
           description: `You have sign up via ${formData.email}`,
