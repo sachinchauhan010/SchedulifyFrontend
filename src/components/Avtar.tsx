@@ -25,6 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 function Avtar() {
 
@@ -160,8 +161,7 @@ function Avtar() {
             <DropdownMenuItem>
               <DialogTrigger>Upload TimeTable</DialogTrigger>
             </DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
+            <DropdownMenuItem><Link to={"/schedule"}>schedule</Link></DropdownMenuItem>
             <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

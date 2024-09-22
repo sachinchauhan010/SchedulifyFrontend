@@ -8,6 +8,7 @@ import App from './App.tsx'
 import './index.css'
 import ErrorPage from './components/ErrorPage.tsx'
 import About from './pages/About.tsx'
+import ScheduleTable from './components/ScheduleTable.tsx';
 
 const appRouter = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/",
         element: <App />,
+      },
+      {
+        path: "/schedule",
+        element: <ScheduleTable />,
       },
       {
         path: "/about",
@@ -30,7 +35,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <AuthProvider>
+        <div className='px-6 py-2'>
         <RouterProvider router={appRouter} />
+        </div>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>,

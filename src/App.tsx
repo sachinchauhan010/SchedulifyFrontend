@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster"
 function App() {
   return (
 
-    <div className="px-8 py-2">
+    <div>
       <Header />
       <Toaster />
       <Home />
