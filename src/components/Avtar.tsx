@@ -1,6 +1,8 @@
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect} from "react";
 import * as XLSX from "xlsx";
+
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 import {
   Dialog,
@@ -30,7 +32,8 @@ function Avtar() {
   const [ttData, setTTData] = useState<{ Day: string; data: any; }[]>([])
   const [name, setName] = useState(null)
 
-  const [auth, setAuth] = useState(true)
+  const {authState, dispatch: dispatchAuthState} = useAuth() 
+
   async function handleLogout() {
     const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/auth/logout`, {
       method: 'POST',
@@ -38,7 +41,9 @@ function Avtar() {
     });
     const data: any = response.json();
     if (data?.success) {
-      setAuth(false);
+      dispatchAuthState({
+        type:"LOGOUT",
+      })
       console.log('Logout successful');
     } else {
       console.error('Logout failed:', data?.message);
@@ -141,7 +146,7 @@ function Avtar() {
 
   useEffect(() => {
     fetchName();
-  }, [auth])
+  }, [authState.isLoggedIn])
 
   return (
     <>
