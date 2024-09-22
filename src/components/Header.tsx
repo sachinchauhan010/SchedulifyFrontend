@@ -1,10 +1,21 @@
+import { useEffect } from "react"
 import Avtar from "./Avtar"
 import Login from "./Login"
 import { ThemeToggle } from "./theme-toggle"
 import { useAuth } from "@/contexts/AuthContext"
+import { useCheckAuth } from "@/hooks/use-check-auth"
 
 function Header() {
-  const { authState } = useAuth()
+  const { authState, dispatch: authStateDispatch } = useAuth() //auth state global store
+
+  async function checkAuth() {
+    const authStatus: any = await useCheckAuth()
+    authStatus.success ? authStateDispatch({ type: "LOGIN", payload: { name: authStatus?.name } }) : authStateDispatch({ type: "LOGOUT" })
+  }
+
+  useEffect(() => {
+    checkAuth()
+  }, [])
 
   return (
     <div className="flex justify-between items-center">
