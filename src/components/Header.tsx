@@ -4,7 +4,7 @@ import { ThemeToggle } from "./theme-toggle"
 import { useAuth } from "@/contexts/AuthContext"
 
 function Header() {
-  const {authState, dispatch: dispatchAuthState} = useAuth() 
+  const {authState} = useAuth() 
 
   return (
     <div className="flex justify-end items-center gap-x-6">

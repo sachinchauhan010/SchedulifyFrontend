@@ -19,7 +19,7 @@ import { DialogDescription } from "@radix-ui/react-dialog"
 export default function AuthDialog() {
 
   const { toast } = useToast()
-  const {authState, dispatch: dispatchAuthState} = useAuth() 
+  const {dispatch: dispatchAuthState} = useAuth() 
 
 
   const [formData, setFormData] = useState({
