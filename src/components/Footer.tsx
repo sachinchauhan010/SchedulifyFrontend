@@ -6,7 +6,7 @@ function Footer() {
     <div className='mt-20'>
       <Separator />
       <div className='flex justify-between items-start pt-6'>
-        <p className="text-xl font-semibold"><span className="text-[#03dac5]">T</span>rack<span className="text-[#03dac5]">M</span>Y<span className="text-[#03dac5]">C</span>lass</p>
+        <Link to={"/"} className="text-xl font-semibold"><span className="text-[#03dac5]">T</span>rack<span className="text-[#03dac5]">M</span>Y<span className="text-[#03dac5]">C</span>lass</Link>
         <div>
           <p>Links</p>
           <div className='flex flex-col items-center justify-start text-sm'>
