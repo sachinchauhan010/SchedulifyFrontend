@@ -25,6 +25,7 @@ export function getDayIdByName(day: string) {
     { id: 6, name: 'Saturday' }
   ];
 
+  
   const foundDay = dayArr.find(d => d.name === day);
   return foundDay ? foundDay.id : null;
 }
