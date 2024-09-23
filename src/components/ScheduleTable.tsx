@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getDay, getDayIdByName, getDate } from "@/utils/getDay";
-import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -30,7 +29,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "./ui/button";
 
 type ScheduleItem = {
   Period: string;
@@ -51,12 +49,11 @@ type DaySchedule = {
 type ClassSchedule = Record<string, string>;
 
 function ScheduleTable() {
-  const {toast} = useToast()
   // const [openAlert, setOpenAlert] = useState<boolean>(false);
   const [schedule, setSchedule] = useState<DaySchedule[]>([]);
-  const [isClassSchedule, setIsClassSchedule] = useState<ClassSchedule[]>([])
-  const [selectOPtion, setSelectOPtion] = useState<string>('')
-  
+  const [, setIsClassSchedule] = useState<ClassSchedule[]>([])
+  const [, setSelectOPtion] = useState<string>('')
+
   const { authState } = useAuth();
 
   useEffect(() => {
@@ -135,11 +132,11 @@ function ScheduleTable() {
                           <TableCell>{item.HallName}</TableCell>
                           <TableCell>
                             <RadioGroup
-                            defaultValue="yes"
+                              defaultValue="yes"
                               onValueChange={(value) => handleRadioChange(value, daySchedule.Day, item?.Period)}
                             >
                               <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="yes" id={`yes-${idx}`}/>
+                                <RadioGroupItem value="yes" id={`yes-${idx}`} />
                                 <Label htmlFor={`yes-${idx}`}>Yes</Label>
                               </div>
                               <div className="flex items-center space-x-2">
