@@ -10,14 +10,15 @@ import About from './pages/About.tsx'
 import ScheduleTable from './components/ScheduleTable.tsx';
 import Header from './components/Header.tsx';
 import Footer from './components/Footer.tsx';
-
 const AppLayout = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <AuthProvider>
-        <Header />
-        <Outlet />
-        <Footer />
+        <div className='px-6 py-2'>
+          <Header />
+          <Outlet />
+          <Footer />
+        </div>
       </AuthProvider>
     </ThemeProvider>
   )

@@ -4,6 +4,7 @@ import Login from "./Login"
 import { ThemeToggle } from "./theme-toggle"
 import { useAuth } from "@/contexts/AuthContext"
 import { useCheckAuth } from "@/hooks/use-check-auth"
+import { Link } from "react-router-dom"
 
 function Header() {
   const { authState, dispatch: authStateDispatch } = useAuth() //auth state global store
@@ -20,7 +21,7 @@ function Header() {
   return (
     <div className="flex justify-between items-center">
 
-      <p className="text-xl font-semibold"><span className="text-[#03dac5]">T</span>rack<span className="text-[#03dac5]">M</span>Y<span className="text-[#03dac5]">C</span>lass</p>
+      <Link to={"/"} className="text-xl font-semibold"><span className="text-[#03dac5]">T</span>rack<span className="text-[#03dac5]">M</span>Y<span className="text-[#03dac5]">C</span>lass</Link>
       <div className="flex justify-end items-center gap-x-6">
         <ThemeToggle />
         {authState.isLoggedIn ? <Avtar /> : <Login />}

@@ -127,11 +127,11 @@ const chartConfig = {
     label: "Visitors",
   },
   desktop: {
-    label: "AttendedClasses",
+    label: "TotalClasses",
     color: "hsl(var(--chart-1))",
   },
   mobile: {
-    label: "TotalClasses",
+    label: "AttendedClasses",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig
