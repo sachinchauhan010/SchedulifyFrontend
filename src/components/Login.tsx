@@ -202,9 +202,9 @@ export default function AuthDialog() {
             {isRegistering ? 'Register' : 'Login'}
           </Button>
         </DialogFooter>
-        <div onClick={() => setIsRegistering(!isRegistering)} className='text-right hover:cursor-pointer'>
+        <span onClick={() => setIsRegistering(!isRegistering)} className='text-right hover:cursor-pointer ml-auto'>
           {isRegistering ? 'Already account Login' : 'Register Now!..'}
-        </div>
+        </span>
       </DialogContent>
     </Dialog>
   )
