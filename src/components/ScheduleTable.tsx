@@ -87,8 +87,7 @@ function ScheduleTable() {
         setSchedule([]);
         return;
       }
-      setSchedule(apiresponse.data || []);
-      console.log(apiresponse.data, "Schedule fetched");
+      setSchedule(apiresponse.data[0] || []);
     } catch (error) {
       console.error("Error fetching schedule:", error);
     }

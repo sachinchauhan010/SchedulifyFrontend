@@ -104,7 +104,7 @@ export default function AuthDialog() {
         if (!apiresponse.success) {
           toast({
             title: "Login: Failed",
-            description: "try again...",
+            description: apiresponse.message,
           })
           return;
         }
