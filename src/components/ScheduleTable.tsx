@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getDay, getDayIdByName, getDate } from "@/utils/getDay";
 import {
   Table,
   TableBody,
@@ -11,17 +10,6 @@ import {
 } from "./ui/table";
 import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-// import {
-//   AlertDialog,
-//   AlertDialogAction,
-//   AlertDialogCancel,
-//   AlertDialogContent,
-//   AlertDialogDescription,
-//   AlertDialogFooter,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-// } from "./ui/alert-dialog";
-
 import {
   Accordion,
   AccordionContent,
@@ -29,51 +17,119 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useAuth } from "@/contexts/AuthContext";
+import { getDate, getDay } from "@/utils/getDay";
 
-type ScheduleItem = {
-  Period: string;
-  Time: string;
-  Subject: string;
-  Course: string;
-  Semester: string;
-  Batch: string;
-  ClassType: string;
-  HallName: string;
+type Period = {
+  period: string;
+  time: string;
+  subject: string;
+  course: string;
+  semester: number;
+  batch: string;
+  classType: string;
+  hallName: string;
+  periodId: string;
+  classesAttended: number;
+  attendanceRecords: Record<string, string>; // e.g., { "2024-09-20": "yes" }
 };
 
 type DaySchedule = {
-  Day: string;
-  data: ScheduleItem[];
+  day: string;
+  periods: Period[];
 };
 
-type ClassSchedule = Record<string, string>;
+type TimetableData = {
+  timetableId: string;
+  schedule: DaySchedule[];
+};
 
 function ScheduleTable() {
-  // const [openAlert, setOpenAlert] = useState<boolean>(false);
-  const [schedule, setSchedule] = useState<DaySchedule[]>([]);
-  const [, setIsClassSchedule] = useState<ClassSchedule[]>([])
-  const [, setSelectOPtion] = useState<string>('')
-
+  const [schedule, setSchedule] = useState<TimetableData | null>(null);
   const { authState } = useAuth();
+
+  const currentDay = getDay().name;
+  const currentDate = getDate();
 
   useEffect(() => {
     if (authState?.isLoggedIn) {
-      getSchedule();
+      fetchSchedule();
     }
   }, [authState?.isLoggedIn]);
 
+  useEffect(()=>{
+    setDefaultAttendence()
+  }, [])
 
-  const handleRadioChange = (value: string, Day: String, Period: String) => {
-    const classId = `${getDate()}-${Day}-${Period}`
-    setSelectOPtion(value);
-    setIsClassSchedule((prevSchedule) => [
-      ...prevSchedule,
-      { [classId]: value || "yes" }
-    ]);
+  const setDefaultAttendence= async()=>{
+    const response= await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/set-default-attendence`,
+      {
+        credentials:'include'
+      })
+
+    const apireaponse= await response.json()
+    console.log(apireaponse,"apiresponse")
+
+  }
+
+  const handleRadioChange = async (
+    value: string,
+    day: string,
+    periodId: string
+  ) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/update-attendence`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            periodId,
+            date: currentDate, // Pass the current date
+            status: value, // "yes" or "no"
+          }),
+        }
+      );
+
+      const apiResponse = await response.json();
+      if (apiResponse.success) {
+        // Update the local state to reflect the change in attendance
+        setSchedule((prevSchedule) => {
+          if (!prevSchedule) return prevSchedule;
+
+          // Find the day in the schedule and update the attendanceRecords
+          const updatedSchedule = prevSchedule.schedule.map((daySchedule) => {
+            if (daySchedule.day === day) {
+              const updatedPeriods = daySchedule.periods.map((period) => {
+                if (period.periodId === periodId) {
+                  return {
+                    ...period,
+                    attendanceRecords: {
+                      ...period.attendanceRecords,
+                      [currentDate]: value, // Update the attendance for the current date
+                    },
+                  };
+                }
+                return period;
+              });
+              return { ...daySchedule, periods: updatedPeriods };
+            }
+            return daySchedule;
+          });
+
+          return { ...prevSchedule, schedule: updatedSchedule };
+        });
+      } else {
+        console.log("Failed to save attendance");
+      }
+    } catch (error) {
+      console.error("Error saving attendance:", error);
+    }
   };
 
-
-  async function getSchedule() {
+  async function fetchSchedule() {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/getschedule`,
@@ -81,29 +137,37 @@ function ScheduleTable() {
           credentials: "include",
         }
       );
-      const apiresponse = await response.json();
-      if (!apiresponse.success) {
+      const apiResponse = await response.json();
+      if (!apiResponse.success) {
         console.log("Failed to fetch the data");
-        setSchedule([]);
+        setSchedule(null);
         return;
       }
-      setSchedule(apiresponse.data[0] || []);
+      setSchedule(apiResponse.data);
     } catch (error) {
       console.error("Error fetching schedule:", error);
     }
   }
 
+  if (!schedule) {
+    return <div>No schedule available</div>;
+  }
+
   return (
     <div className="w-full">
       <div className="text-2xl text-center w-full">Track My Class</div>
-      {schedule.map((daySchedule, index) => (
+      {schedule.schedule.map((daySchedule, index) => (
         <div key={index}>
-          <Accordion type="single" collapsible defaultValue={"item-" + getDay().id}>
-            <AccordionItem value={"item-" + getDayIdByName(daySchedule.Day)}>
-              <AccordionTrigger>{daySchedule.Day}</AccordionTrigger>
+          <Accordion
+            type="single"
+            collapsible
+            defaultValue={daySchedule.day === currentDay ? "item-" + daySchedule.day : ""}
+          >
+            <AccordionItem value={"item-" + daySchedule.day}>
+              <AccordionTrigger>{daySchedule.day}</AccordionTrigger>
               <AccordionContent>
                 <Table>
-                  <TableCaption>Your schedule for {daySchedule.Day}</TableCaption>
+                  <TableCaption>Your schedule for {daySchedule.day}</TableCaption>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Period</TableHead>
@@ -118,21 +182,23 @@ function ScheduleTable() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {daySchedule.data && daySchedule.data.length > 0 ? (
-                      daySchedule.data.map((item, idx) => (
+                    {daySchedule.periods && daySchedule.periods.length > 0 ? (
+                      daySchedule.periods.map((periodItem, idx) => (
                         <TableRow key={idx}>
-                          <TableCell>{item.Period}</TableCell>
-                          <TableCell>{item.Time}</TableCell>
-                          <TableCell>{item.Subject}</TableCell>
-                          <TableCell>{item.Course}</TableCell>
-                          <TableCell>{item.Semester}</TableCell>
-                          <TableCell>{item.Batch}</TableCell>
-                          <TableCell>{item.ClassType}</TableCell>
-                          <TableCell>{item.HallName}</TableCell>
+                          <TableCell>{periodItem.period}</TableCell>
+                          <TableCell>{periodItem.time}</TableCell>
+                          <TableCell>{periodItem.subject}</TableCell>
+                          <TableCell>{periodItem.course}</TableCell>
+                          <TableCell>{periodItem.semester}</TableCell>
+                          <TableCell>{periodItem.batch}</TableCell>
+                          <TableCell>{periodItem.classType}</TableCell>
+                          <TableCell>{periodItem.hallName}</TableCell>
                           <TableCell>
                             <RadioGroup
-                              defaultValue="yes"
-                              onValueChange={(value) => handleRadioChange(value, daySchedule.Day, item?.Period)}
+                              defaultValue={periodItem.attendanceRecords[currentDate] || "yes"}
+                              onValueChange={(value) =>
+                                handleRadioChange(value, daySchedule.day, periodItem.periodId)
+                              }
                             >
                               <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="yes" id={`yes-${idx}`} />
@@ -149,37 +215,17 @@ function ScheduleTable() {
                     ) : (
                       <TableRow>
                         <TableCell colSpan={9} className="text-center">
-                          No schedule available for {daySchedule.Day}.
+                          No schedule available for {daySchedule.day}.
                         </TableCell>
                       </TableRow>
                     )}
                   </TableBody>
                 </Table>
-                <div className="flex justify-end items-center">
-                  {/* <Button onClick={SubmitResponse}>Submit Schedule</Button> */}
-                </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
         </div>
       ))}
-
-      {/* <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. You are about to skip the class.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={}>Cancel</AlertDialogCancel>
-            <AlertDialogAction>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog> */}
     </div>
   );
 }
