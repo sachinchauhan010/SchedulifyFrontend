@@ -56,6 +56,21 @@ function ScheduleTable() {
     }
   }, [authState?.isLoggedIn]);
 
+  useEffect(()=>{
+    setDefaultAttendence()
+  }, [])
+
+  const setDefaultAttendence= async()=>{
+    const response= await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/set-default-attendence`,
+      {
+        credentials:'include'
+      })
+
+    const apireaponse= await response.json()
+    console.log(apireaponse,"apiresponse")
+
+  }
+
   const handleRadioChange = async (
     value: string,
     day: string,

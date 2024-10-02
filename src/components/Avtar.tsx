@@ -110,7 +110,7 @@ function Avtar() {
 
   const handleFileSubmit = async () => {
     try {
-      const timetableId = "0001";
+      const timetableId = "00001";
 
       const payload = {
         timetableId,
