@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -16,7 +15,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useAuth } from "@/contexts/AuthContext";
 import { getDate, getDay } from "@/utils/getDay";
 
 type Period = {
@@ -30,7 +28,7 @@ type Period = {
   hallName: string;
   periodId: string;
   classesAttended: number;
-  attendanceRecords: Record<string, string>; // e.g., { "2024-09-20": "yes" }
+  attendanceRecords: Record<string, string>;
 };
 
 type DaySchedule = {
@@ -43,33 +41,13 @@ type TimetableData = {
   schedule: DaySchedule[];
 };
 
-function ScheduleTable() {
-  const [schedule, setSchedule] = useState<TimetableData | null>(null);
-  const { authState } = useAuth();
+interface ScheduleTableProps {
+  schedule: TimetableData | null;
+}
 
+function ScheduleTable({ schedule }: ScheduleTableProps) {
   const currentDay = getDay().name;
   const currentDate = getDate();
-
-  useEffect(() => {
-    if (authState?.isLoggedIn) {
-      fetchSchedule();
-    }
-  }, [authState?.isLoggedIn]);
-
-  useEffect(()=>{
-    setDefaultAttendence()
-  }, [])
-
-  const setDefaultAttendence= async()=>{
-    const response= await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/set-default-attendence`,
-      {
-        credentials:'include'
-      })
-
-    const apireaponse= await response.json()
-    console.log(apireaponse,"apiresponse")
-
-  }
 
   const handleRadioChange = async (
     value: string,
@@ -93,34 +71,9 @@ function ScheduleTable() {
         }
       );
 
-      const apiResponse = await response.json();
+      const apiResponse=await response.json();
       if (apiResponse.success) {
-        // Update the local state to reflect the change in attendance
-        setSchedule((prevSchedule) => {
-          if (!prevSchedule) return prevSchedule;
-
-          // Find the day in the schedule and update the attendanceRecords
-          const updatedSchedule = prevSchedule.schedule.map((daySchedule) => {
-            if (daySchedule.day === day) {
-              const updatedPeriods = daySchedule.periods.map((period) => {
-                if (period.periodId === periodId) {
-                  return {
-                    ...period,
-                    attendanceRecords: {
-                      ...period.attendanceRecords,
-                      [currentDate]: value, // Update the attendance for the current date
-                    },
-                  };
-                }
-                return period;
-              });
-              return { ...daySchedule, periods: updatedPeriods };
-            }
-            return daySchedule;
-          });
-
-          return { ...prevSchedule, schedule: updatedSchedule };
-        });
+        console.log("Attendence Updated successfully")
       } else {
         console.log("Failed to save attendance");
       }
@@ -129,34 +82,10 @@ function ScheduleTable() {
     }
   };
 
-  async function fetchSchedule() {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/getschedule`,
-        {
-          credentials: "include",
-        }
-      );
-      const apiResponse = await response.json();
-      if (!apiResponse.success) {
-        console.log("Failed to fetch the data");
-        setSchedule(null);
-        return;
-      }
-      setSchedule(apiResponse.data);
-    } catch (error) {
-      console.error("Error fetching schedule:", error);
-    }
-  }
-
-  if (!schedule) {
-    return <div>No schedule available</div>;
-  }
-
   return (
     <div className="w-full">
       <div className="text-2xl text-center w-full">Track My Class</div>
-      {schedule.schedule.map((daySchedule, index) => (
+      {schedule?.schedule.map((daySchedule, index) => (
         <div key={index}>
           <Accordion
             type="single"

@@ -7,9 +7,10 @@ import App from './App.tsx'
 import './index.css'
 import ErrorPage from './components/ErrorPage.tsx'
 import About from './pages/About.tsx'
-import ScheduleTable from './components/ScheduleTable.tsx';
 import Header from './components/Header.tsx';
 import Footer from './components/Footer.tsx';
+import Schedule from './pages/Schedule.tsx';
+
 const AppLayout = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -36,7 +37,7 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "/schedule",
-        element: <ScheduleTable />,
+        element: <Schedule />,
       },
       {
         path: "/about",
