@@ -51,7 +51,6 @@ function ScheduleTable({ schedule }: ScheduleTableProps) {
 
   const handleRadioChange = async (
     value: string,
-    day: string,
     periodId: string
   ) => {
     try {
@@ -65,8 +64,8 @@ function ScheduleTable({ schedule }: ScheduleTableProps) {
           credentials: "include",
           body: JSON.stringify({
             periodId,
-            date: currentDate, // Pass the current date
-            status: value, // "yes" or "no"
+            date: currentDate, 
+            status: value,
           }),
         }
       );
@@ -126,7 +125,7 @@ function ScheduleTable({ schedule }: ScheduleTableProps) {
                             <RadioGroup
                               defaultValue={periodItem.attendanceRecords[currentDate] || "yes"}
                               onValueChange={(value) =>
-                                handleRadioChange(value, daySchedule.day, periodItem.periodId)
+                                handleRadioChange(value, periodItem.periodId)
                               }
                             >
                               <div className="flex items-center space-x-2">
