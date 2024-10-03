@@ -1,4 +1,4 @@
-import { ClassChart } from "@/components/ClassChart"
+import { ClassChart } from "@/components/Home/ClassChart"
 
 function Home() {
   return (

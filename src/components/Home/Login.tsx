@@ -2,7 +2,7 @@ import { useState, useEffect} from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/AuthContext"
 
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import {
   Dialog,
   DialogClose,
@@ -11,9 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
+} from "../ui/dialog"
+import { Input } from "../ui/input"
+import { Label } from "../ui/label"
 import { DialogDescription } from "@radix-ui/react-dialog"
 
 export default function AuthDialog() {

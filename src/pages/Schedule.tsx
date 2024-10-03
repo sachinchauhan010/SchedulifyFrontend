@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/contexts/AuthContext";
 
-import ScheduleTable from "@/components/ScheduleTable";
+import ScheduleTable from "@/components/Schedule/ScheduleTable";
 
 type Period = {
   period: string;

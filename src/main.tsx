@@ -1,11 +1,11 @@
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-import { ThemeProvider } from "./components/theme-provider"
+import { ThemeProvider } from "./components/Theme/theme-provider.tsx"
 import { AuthProvider } from "./contexts/AuthContext"
 
 import App from './App.tsx'
 import './index.css'
-import ErrorPage from './components/ErrorPage.tsx'
+import ErrorPage from './pages/ErrorPage.tsx'
 import About from './pages/About.tsx'
 import Header from './components/Header.tsx';
 import Footer from './components/Footer.tsx';

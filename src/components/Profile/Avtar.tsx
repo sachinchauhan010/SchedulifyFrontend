@@ -24,7 +24,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 
 type ttSchedule = { day: string; periods: { period: any; time: any; subject: any; course: any; semester: any; batch: any; classType: any; hallName: any; periodId: string; classesAttended: any; attendanceRecords: never[]; }[]; }[]
@@ -190,7 +190,7 @@ function Avtar() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Upload the excel file here</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="flex justify-between items-end gap-10 py-2">
               <div className="grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="picture">Upload Time Table</Label>
                 <Input
