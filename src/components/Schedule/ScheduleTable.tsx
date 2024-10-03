@@ -1,21 +1,11 @@
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
+import { getDate, getDay } from "@/utils/getDay";
+
+import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { getDate, getDay } from "@/utils/getDay";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
 
 type Period = {
   period: string;
@@ -46,8 +36,8 @@ interface ScheduleTableProps {
 }
 
 function ScheduleTable({ schedule }: ScheduleTableProps) {
-  const currentDay = getDay().name;
-  const currentDate = getDate();
+  const currentDay = getDay().name
+  const currentDate = getDate()
 
   const handleRadioChange = async (
     value: string,
@@ -64,13 +54,13 @@ function ScheduleTable({ schedule }: ScheduleTableProps) {
           credentials: "include",
           body: JSON.stringify({
             periodId,
-            date: currentDate, 
+            date: currentDate,
             status: value,
           }),
         }
       );
 
-      const apiResponse=await response.json();
+      const apiResponse = await response.json();
       if (apiResponse.success) {
         console.log("Attendence Updated successfully")
       } else {
@@ -94,8 +84,15 @@ function ScheduleTable({ schedule }: ScheduleTableProps) {
             <AccordionItem value={"item-" + daySchedule.day}>
               <AccordionTrigger>{daySchedule.day}</AccordionTrigger>
               <AccordionContent>
+
                 <Table>
-                  <TableCaption>Your schedule for {daySchedule.day}</TableCaption>
+                  <TableCaption className="">
+                    <div className="flex justify-around items-center">
+
+                      <p>Your schedule for {daySchedule.day}</p>
+                      <Button>Submit</Button>
+                    </div>
+                  </TableCaption>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Period</TableHead>
@@ -137,6 +134,7 @@ function ScheduleTable({ schedule }: ScheduleTableProps) {
                                 <Label htmlFor={`no-${idx}`}>No</Label>
                               </div>
                             </RadioGroup>
+
                           </TableCell>
                         </TableRow>
                       ))
