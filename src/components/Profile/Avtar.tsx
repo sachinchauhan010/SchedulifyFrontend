@@ -94,7 +94,7 @@ function Avtar() {
 
   const handleFileSubmit = async () => {
     try {
-      const timetableId = "00001";
+      const timetableId = "001";
 
       const payload = {
         timetableId,
@@ -139,10 +139,12 @@ function Avtar() {
           credentials: "include",
         }
       );
+      console.log(response, "res")
       const apiResponse = await response.json();
 
+      console.log(apiResponse, "api")
       if (apiResponse.success) {
-        setName(apiResponse.userData);
+        setName(apiResponse.data);
       }
     } catch (error) {
       console.log("Error fetching user name:", error);
