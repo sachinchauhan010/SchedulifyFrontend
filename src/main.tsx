@@ -10,6 +10,7 @@ import About from './pages/About.tsx'
 import Header from './components/Header.tsx';
 import Footer from './components/Footer.tsx';
 import Schedule from './pages/Schedule.tsx';
+import { Toaster } from "@/components/ui/toaster"
 
 const AppLayout = () => {
   return (
@@ -17,6 +18,7 @@ const AppLayout = () => {
       <AuthProvider>
         <div className='px-6 py-2'>
           <Header />
+          <Toaster />
           <Outlet />
           <Footer />
         </div>
