@@ -33,9 +33,9 @@ function Schedule() {
   const { authState } = useAuth();
   const [schedule, setSchedule] = useState<TimetableData | null>(null);
 
-  // useEffect(() => {
-  //   setDefaultAttendence()
-  // }, [])
+  useEffect(() => {
+    setDefaultAttendence()
+  }, [])
 
   useEffect(() => {
     if (authState?.isLoggedIn) {
@@ -43,13 +43,13 @@ function Schedule() {
     }
   }, [authState?.isLoggedIn]);
 
-  // const setDefaultAttendence = async () => {
-  //   const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/set-default-attendence`,
-  //     {
-  //       credentials: 'include'
-  //     })
-  //   await response.json()
-  // }
+  const setDefaultAttendence = async () => {
+    const response = await fetch(`${import.meta.env.VITE_PRODUCTION_URI}/api/faculty/set-default-attendence`,
+      {
+        credentials: 'include'
+      })
+    await response.json()
+  }
 
   async function fetchSchedule() {
     try {
